@@ -125,6 +125,13 @@ def searchPokemon():
         # If the response was valid from the API (True = 200) then proceed to next GUI.
         if response == 200:
             data = read_JSON(pokemon)
+
+            # Retrieve and download a image for this pokemon.
+            img_Request = requests.get(data['imageUrl']).content
+            with open('DATA/' + pokemon.upper() + "/" + pokemon.upper() + '.png', 'wb') as handler:
+                handler.write(img_Request)
+
+            # Call function to display pokemon's attributes and statistics.
             displayPokemon(data)
 
         # This means that the response code was invalid (False = 404, etc). Display error screen.
@@ -141,16 +148,19 @@ def searchPokemon():
     background = tk.Label(master, image=background_image)
     background.pack()
 
+    # Just some text labels. . .
     label1 = tk.Label(background, text='ENTER POKÉMON BY ID OR NAME:', background='black')
-    label1.config(font=('Helvetica 30 bold'), fg='white')
+    label1.config(font='Helvetica 30 bold', fg='white')
     label1.pack(fill=tk.BOTH, padx=80, pady=(120, 10))
 
     # String variable to contain searched pokemon name/id from entry().
     search = tk.StringVar()
 
+    # Search bar allows user to enter their search for id or name of a pokemon.
     searchBar = tk.Entry(background, textvariable=search, font="Helvetica 44 bold", justify="center")
     searchBar.pack(fill=tk.BOTH, padx=80, pady=14)
 
+    # Search button directs user to next GUI.
     searchButton = tk.Button(background, text='SEARCH', font='Helvetica 40 bold')
     searchButton.config(highlightbackground='red', fg='white', command=lambda: submitSearch(search.get()))
     searchButton.pack(fill=tk.BOTH, padx=225)
@@ -183,14 +193,36 @@ def displayPokemon(data):
     background_Display = tk.Label(root, image=background_Image_Display)
     background_Display.pack()
 
+    # Label displays pokemon's image.
+    loadImage_Pokemon = Image.open('DATA/' + data['name'].upper() + "/" + data['name'].upper() + '.png')
+    copy_of_Image_ = loadImage_Pokemon.copy()
+    image = loadImage_Pokemon.resize((150, 150), Image.ANTIALIAS)
+    background_Image_ = ImageTk.PhotoImage(image)
+    background_ = tk.Label(background_Display, image=background_Image_)
+    background_.pack(pady=(55, 0))
+
+    # Display additional information underneath.
+    nameLabel = tk.Label(background_Display, text=" #" + str(data['id']) + "\n" + data['name'] + " ",
+                         fg='white', bg='black', font='HELVETICA 20 bold')
+    nameLabel.pack(side="top", fill="x", padx=80)
+
+
+    # Window attributes for root.
     root.title('Python Pokédex')
-    root.geometry('750x500')
+    root.geometry('400x600')
+    root.minsize(400, 600)
     root.bind('<Configure>', resize_BG_root)
     root.mainloop()
 
-
+'''
 print('[Python Pokédex booted up.]')
 searchPokemon()
+
+
+fetch_JSON('Pikachu')
+'''
+data = read_JSON('Pikachu')
+displayPokemon(data)
 
 
 
