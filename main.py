@@ -233,6 +233,15 @@ def displayPokemon(data):
         # Avoid garbage collection.
         background_Display.image = photo
 
+    def displayStats():
+        statWindow = tk.Toplevel()
+        loadImage = Image.open('DATA/' + data['name'].upper() + "/" + data['name'].upper() + '_stats.png')
+        background_Image = ImageTk.PhotoImage(loadImage)
+        background = tk.Label(statWindow, image=background_Image)
+        background.pack()
+
+        statWindow.mainloop()
+
     root = tk.Toplevel()
 
     # Create label for GUI background image.
@@ -285,6 +294,23 @@ def displayPokemon(data):
 
     spdLabel = tk.Label(background_Display, text='SPD: ' + str(data['speed']), fg='magenta', font='HELVETICA 24 bold')
     spdLabel.pack()
+
+    # Function kills the display window.
+    def killWindow():
+        root.quit()
+        root.destroy()
+
+    # Close button to demolish window.
+    cButt = tk.Button(background_Display, text='CLOSE', font='HELVETICA 20 bold',
+                      command=lambda: killWindow())
+    cButt.config(highlightbackground='white', fg='red')
+    cButt.pack(side=tk.BOTTOM, pady=10)
+
+    # Button to see stats as percentages.
+    dButt = tk.Button(background_Display, text='Stat Breakdown', font='HELVETICA 20 bold',
+                      command=lambda: displayStats())
+    dButt.config(highlightbackground='white', fg='green')
+    dButt.pack(side=tk.BOTTOM, pady=10)
 
     # Window attributes for root.
     root.title('Python Pokédex')
