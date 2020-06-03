@@ -160,7 +160,32 @@ def searchPokemon():
 
         # This means that the response code was invalid (False = 404, etc). Display error screen.
         else:
-            print(str(response) + " to be implemented")
+
+            # Function displays an error message. And Kills the active GUI.
+            def killGUI():
+                error.quit()
+                error.destroy()
+
+            error = tk.Tk()
+
+            error.config(bg='coral2')
+
+            label1 = tk.Label(error, text=str(response) + ' Error Code', font='Helvetica 20 bold')
+            label1.pack(pady=20)
+
+            label2 = tk.Label(error, text= 'No problem! It probally just means that\n'
+                                           'the pokemon you specified does not exist.\n'
+                                           'Try submitting the search again. ', font='Helvetica 10 bold')
+            label2.pack(pady=2)
+
+            button = tk.Button(error, text='CLOSE', font='HELVETICA 10 bold', bg='White', fg='red',
+                               command=lambda: killGUI())
+            button.pack(fill=tk.X, padx=100, pady=10)
+
+            error.geometry('400x200')
+            error.resizable(False, False)
+            error.title(response)
+            error.mainloop()
 
     # Create tkinter window object.
     master = tk.Tk()
