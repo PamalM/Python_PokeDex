@@ -6,6 +6,7 @@ import os
 from texttable import Texttable
 import tkinter as tk
 from PIL import Image, ImageTk
+import matplotlib.pyplot as plt
 
 
 # Function performs the API request for information for the specified pokemon.
@@ -119,6 +120,25 @@ def searchPokemon():
     # Function transfers user to next screen to view pokemon stats.
     def submitSearch(pokemon):
 
+        # Function draws a graph model to be displayed in the next GUI.
+        def drawStats(array, total, name):
+
+            # Formats the labels on the pie chart to a specific format.
+            def autopct_format(values):
+                def my_format(pct):
+                    val = int(round(pct * total / 100.0))
+                    return '{v:d}'.format(v=val)
+
+                return my_format
+
+            # Create a pie chart model to output as a png model on display GUI.
+            labels = ['HP', 'ATK', 'DEF', 'SP. ATK', 'SP. DEF', 'SPD']
+            colors = ['#49B537', '#17639E', '#D8481F', '#78B7E7', '#DB9A88', '#DEDC36']
+            plt.pie(array, labels=labels, colors=colors,
+                    autopct = autopct_format(array), startangle=90)
+
+            plt.savefig('DATA/' + name + "/" + name + "_stats" + '.png')  # save the figure to file
+
         # Get response code from API.
         response = fetch_JSON(pokemon)
 
@@ -130,6 +150,10 @@ def searchPokemon():
             img_Request = requests.get(data['imageUrl']).content
             with open('DATA/' + pokemon.upper() + "/" + pokemon.upper() + '.png', 'wb') as handler:
                 handler.write(img_Request)
+
+            # Generate the stats model that will be displayed in the next GUI.
+            drawStats([data['hp'], data['attack'], data['defence'],
+                       data['spAttack'], data['spDefence'], data['speed']], data['totalStats'], data['name'].upper())
 
             # Call function to display pokemon's attributes and statistics.
             displayPokemon(data)
@@ -149,7 +173,7 @@ def searchPokemon():
     background.pack()
 
     # Just some text labels. . .
-    label1 = tk.Label(background, text='ENTER POKÉMON BY ID OR NAME:', background='black')
+    label1 = tk.Label(background, text='ENTER POKÉMON NAME:', background='black')
     label1.config(font='Helvetica 30 bold', fg='white')
     label1.pack(fill=tk.BOTH, padx=80, pady=(120, 10))
 
@@ -206,24 +230,44 @@ def displayPokemon(data):
                          fg='white', bg='black', font='HELVETICA 20 bold')
     nameLabel.pack(side="top", fill="x", padx=80)
 
+    if len(data['type']) == 2:
+        typeLabel = tk.Label(background_Display, text=str(data['type'][0].upper() + ", " + data['type'][1].upper()),
+                             fg='black', font='HELVETICA 18 bold')
+        typeLabel.pack(pady=(4, 0))
+
+    else:
+        typeLabel = tk.Label(background_Display, text=str(data['type'][0].upper()), fg='black', font='HELVETICA 18 bold')
+        typeLabel.pack(pady=(4, 0))
+
+    hwLabel = tk.Label(background_Display, text=str(data['height']) + "(m)" + "  " + str(data['weight']) + '(lbs)',
+                       font='HELVETICA 16 bold', fg='black')
+    hwLabel.pack()
+
+    hpLabel = tk.Label(background_Display, text='HP: ' + str(data['hp']), fg='green', font='HELVETICA 24 bold')
+    hpLabel.pack(pady=(6, 0))
+
+    atkLabel = tk.Label(background_Display, text='ATK: ' + str(data['attack']), fg='medium blue', font='HELVETICA 24 bold')
+    atkLabel.pack(fill=tk.X)
+
+    defLabel = tk.Label(background_Display, text='DEF: ' + str(data['defence']), fg='red4', font='HELVETICA 24 bold')
+    defLabel.pack()
+
+    spAtkLabel = tk.Label(background_Display, text='SP. ATK: ' + str(data['spAttack']), fg='slategray3', font='HELVETICA 24 bold')
+    spAtkLabel.pack()
+
+    spDefLabel = tk.Label(background_Display, text='SP. DEF: ' + str(data['spDefence']), fg='brown1', font='HELVETICA 24 bold')
+    spDefLabel.pack()
+
+    spdLabel = tk.Label(background_Display, text='SPD: ' + str(data['speed']), fg='magenta', font='HELVETICA 24 bold')
+    spdLabel.pack()
 
     # Window attributes for root.
     root.title('Python Pokédex')
-    root.geometry('400x600')
-    root.minsize(400, 600)
+    root.geometry('400x700')
+    root.minsize(400, 700)
     root.bind('<Configure>', resize_BG_root)
     root.mainloop()
 
-'''
+
 print('[Python Pokédex booted up.]')
 searchPokemon()
-
-
-fetch_JSON('Pikachu')
-'''
-data = read_JSON('Pikachu')
-displayPokemon(data)
-
-
-
-
