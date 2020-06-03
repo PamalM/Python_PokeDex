@@ -1,0 +1,4 @@
+The DATA folder contains .json information for all the pokemon you've searched for.
+Within the sub folders for each pokemon, you will find a .png illistrating their skills in a pie graph matplotlib photo.
+I hope you enjoyed this project, It's the first one i've worked on by myself involving API fetching, and json libraries.
+If you have any suggesstions feel free to let me know, and i can implement them into the project!
