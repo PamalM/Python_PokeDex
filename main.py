@@ -271,3 +271,4 @@ def displayPokemon(data):
 
 print('[Python Pokédex booted up.]')
 searchPokemon()
+print('[Python Pokédex boot down.]')
